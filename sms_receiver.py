@@ -22,13 +22,14 @@ import json
 import os
 import pandas as pd
 import requests
+import settings
 
-BASEDIR = 'data/'
-BASEBECONURL = 'INPUT YOUR DJANGO URL'
-BECONURL = BASEBECONURL+'/api/monitorsave/'
-DJUSERNAME = 'DJANGO USERNAME'
-DJPASSWORD = 'DJANGO PASSWORD'
-ENCYRPTIONKEY = 'ENTER ENCYRPTIONKEY'
+BASE_DIR= os.getenv("BASE_DIR")
+BASE_BECON_URL= os.getenv("BASE_BECON_URL")
+BECON_URL= BASE_BECON_URL + '/api/monitorsave/'
+DJ_USERNAME= os.getenv("DJ_USERNAME")
+DJ_PASSWORD= os.getenv("DJ_PASSWORD")
+ENCRYPTION_KEY= os.getenv("ENCRYPTION_KEY")
 
 warnings.filterwarnings('ignore')  # Ignore warnings
 
