@@ -51,13 +51,15 @@ def beconRecord(site):
 
 def saveData(data,sitename,district):
     district = district.strip()
+    data = data.decode()   # Convert binary string to utf-8 string
+    source = json.loads(data)['source']
     print('preview data')
     print(data)
-    path = BASE_DIR + '/' + district + '/' + data['source']
+    path = f'{BASE_DIR}/{district}/{source}'
     if not os.path.exists(path):
-        os.mkdir(path)
+        os.makedirs(path)
     with open(path + '/' + sitename.rstrip()+'.json', 'w') as outfile:
-        json.dump(data.decode(), outfile, ensure_ascii=False)
+        print(data, file=outfile)
 
 def writeCSV(chafile,siteid):
     print('checksiteid:',siteid)
@@ -248,4 +250,9 @@ def chat_reply():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True)
+    import sys
+
+    if len(sys.argv) == 2:
+        app.run(host='0.0.0.0', port=sys.argv[1], debug=True)
+    else:
+        app.run(host='0.0.0.0', debug=True)
