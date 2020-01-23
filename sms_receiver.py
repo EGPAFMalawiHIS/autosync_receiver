@@ -22,13 +22,14 @@ import json
 import os
 import pandas as pd
 import requests
+import settings
 
-BASEDIR = 'data/'
-BASEBECONURL = 'INPUT YOUR DJANGO URL'
-BECONURL = BASEBECONURL+'/api/monitorsave/'
-DJUSERNAME = 'DJANGO USERNAME'
-DJPASSWORD = 'DJANGO PASSWORD'
-ENCYRPTIONKEY = 'ENTER ENCYRPTIONKEY'
+BASE_DIR= os.getenv("BASE_DIR")
+BASE_BECON_URL= os.getenv("BASE_BECON_URL")
+BECON_URL= BASE_BECON_URL + '/api/monitorsave/'
+DJ_USERNAME= os.getenv("DJ_USERNAME")
+DJ_PASSWORD= os.getenv("DJ_PASSWORD")
+ENCRYPTION_KEY= os.getenv("ENCRYPTION_KEY")
 
 warnings.filterwarnings('ignore')  # Ignore warnings
 
@@ -40,7 +41,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 app = Flask(__name__)
 def beconRecord(site):
     data = {'status':1, 'sitecode':site.strip()}
-    resp = requests.post(BECONURL, json=data, auth=(DJUSERNAME, DJPASSWORD))
+    resp = requests.post(BECON_URL, json=data, auth=(DJ_USERNAME, DJ_PASSWORD))
     if resp.status_code   == 200 or resp.status_code   == 201 :
 
         print('becon saved successfully',resp)
@@ -50,12 +51,15 @@ def beconRecord(site):
 
 def saveData(data,sitename,district):
     district = district.strip()
+    data = data.decode()   # Convert binary string to utf-8 string
+    source = json.loads(data)['source']
     print('preview data')
     print(data)
-    if not os.path.exists(BASEDIR + '/' + district):
-        os.mkdir(BASEDIR + '/' + district)
-    with open(BASEDIR + '/' + district + '/' + sitename.rstrip()+'.json', 'w') as outfile:
-        json.dump(data.decode(), outfile, ensure_ascii=False)
+    path = f'{BASE_DIR}/{district}/{source}'
+    if not os.path.exists(path):
+        os.makedirs(path)
+    with open(path + '/' + sitename.rstrip()+'.json', 'w') as outfile:
+        print(data, file=outfile)
 
 def writeCSV(chafile,siteid):
     print('checksiteid:',siteid)
@@ -235,7 +239,7 @@ def chat_reply():
     sitecode = request.form['sitecode']
     sitename = request.form['sitename']
     district = request.form['district']
-    key =  b''+ENCYRPTIONKEY
+    key =  bytes(ENCRYPTION_KEY, encoding='utf-8')
     string_encrypted = str.encode(message_body)
     print(decrypt(string_encrypted,key))
     saveData(decrypt(string_encrypted,key),sitename,district)
@@ -246,4 +250,9 @@ def chat_reply():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True)
+    import sys
+
+    if len(sys.argv) == 2:
+        app.run(host='0.0.0.0', port=sys.argv[1], debug=True)
+    else:
+        app.run(host='0.0.0.0', debug=True)
