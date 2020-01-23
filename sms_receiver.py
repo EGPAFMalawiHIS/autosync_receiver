@@ -53,9 +53,10 @@ def saveData(data,sitename,district):
     district = district.strip()
     print('preview data')
     print(data)
-    if not os.path.exists(BASEDIR + '/' + district):
-        os.mkdir(BASEDIR + '/' + district)
-    with open(BASEDIR + '/' + district + '/' + sitename.rstrip()+'.json', 'w') as outfile:
+    path = BASE_DIR + '/' + district + '/' + data['source']
+    if not os.path.exists(path):
+        os.mkdir(path)
+    with open(path + '/' + sitename.rstrip()+'.json', 'w') as outfile:
         json.dump(data.decode(), outfile, ensure_ascii=False)
 
 def writeCSV(chafile,siteid):
