@@ -237,7 +237,7 @@ def chat_reply():
     sitecode = request.form['sitecode']
     sitename = request.form['sitename']
     district = request.form['district']
-    key =  b''+ENCRYPTION_KEY
+    key =  bytes(ENCRYPTION_KEY, encoding='utf-8')
     string_encrypted = str.encode(message_body)
     print(decrypt(string_encrypted,key))
     saveData(decrypt(string_encrypted,key),sitename,district)
