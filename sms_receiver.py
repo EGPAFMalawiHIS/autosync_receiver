@@ -41,7 +41,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 app = Flask(__name__)
 def beconRecord(site):
     data = {'status':1, 'sitecode':site.strip()}
-    resp = requests.post(BECONURL, json=data, auth=(DJUSERNAME, DJPASSWORD))
+    resp = requests.post(BECON_URL, json=data, auth=(DJ_USERNAME, DJ_PASSWORD))
     if resp.status_code   == 200 or resp.status_code   == 201 :
 
         print('becon saved successfully',resp)
@@ -236,7 +236,7 @@ def chat_reply():
     sitecode = request.form['sitecode']
     sitename = request.form['sitename']
     district = request.form['district']
-    key =  b''+ENCYRPTIONKEY
+    key =  b''+ENCRYPTION_KEY
     string_encrypted = str.encode(message_body)
     print(decrypt(string_encrypted,key))
     saveData(decrypt(string_encrypted,key),sitename,district)
