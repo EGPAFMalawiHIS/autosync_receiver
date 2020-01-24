@@ -51,15 +51,19 @@ def beconRecord(site):
 
 def saveData(data,sitename,district):
     district = district.strip()
-    data = data.decode()   # Convert binary string to utf-8 string
-    source = json.loads(data)['source']
-    print('preview data')
-    print(data)
-    path = f'{BASE_DIR}/{district}/{source}'
-    if not os.path.exists(path):
-        os.makedirs(path)
-    with open(path + '/' + sitename.rstrip()+'.json', 'w') as outfile:
-        print(data, file=outfile)
+    sitename = sitename.strip()
+    reports = json.loads(data.decode())
+    for report in reports:
+        logging.info('Saving report: %s', report)
+
+        dirpath = os.path.join(BASE_DIR, district, report['report_source'])
+        if not os.path.exists(dirpath):
+            os.makedirs(dirpath)
+        
+        data_filename = f"{sitename} - {report['report_name']}.json" if 'report_name' in report else sitename
+
+        with open(os.path.join(dirpath, data_filename), 'w') as outfile:
+            print(json.dumps(report), file=outfile)
 
 def writeCSV(chafile,siteid):
     print('checksiteid:',siteid)
