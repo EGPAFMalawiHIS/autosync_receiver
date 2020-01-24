@@ -120,7 +120,7 @@ def chacsvb(filename,site):
             #print(f'\t{row["Trigger"]} works in the {row["SiteName"]} department, and was born in {row["orgUnit"]}.')
             #print('ROW::',row["orgUnit"] + ' ::'+row["Trigger"])
             if int(row["Trigger"]) == 1 and row["orgUnit"].strip() == site.strip() :
-                state = json.dumps({'response':'Yes','quota':row["Quota"]})
+                state = json.dumps({'response':'Yes','quota':row["Quota"],'year':row["Year"]})
                 row["Trigger"] = 2;
                 check = 1
                 print('in the line of duty:',state)
